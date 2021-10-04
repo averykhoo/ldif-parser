@@ -1,0 +1,30 @@
+version:1
+dn: cn=John E Doe, o=University of High
+ er Learning, c=US
+cn: John E Doe
+cn: John Doe
+objectclass: person
+sn: Doe
+
+dn: cn=Bjorn L Doe, o=University of High
+ er Learning, c=US
+cn: Bjorn L Doe
+cn: Bjorn Doe
+objectclass: person
+sn: Doe
+
+# comment
+
+dn: cn=common name, o=organization, c=country
+some_text:: MTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0
+ NTY3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY
+ 3ODkwMTIzNDU2Nzg5MDEyMzQ1Njc4OTAxMjM0NTY3OD
+ kwMTIzNDU2Nzg5MA==
+continuation line starts with space: test
+  test
+very very long
+  key that
+ wraps around: should still work
+some url:< https://something.com/path?query#fragment
+another url: < file:/usr/local/share/fonts
+left-padded value:            test
