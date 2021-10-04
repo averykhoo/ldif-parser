@@ -182,6 +182,16 @@ class Attribute:
             return []
         return self.options.split(';')
 
+    @property
+    def text(self) -> str:
+        if isinstance(self.value, bytes):
+            return base64.b64decode(self.value).decode('utf8')
+        elif isinstance(self.value, URL):
+            return self.value.text
+        else:
+            assert isinstance(self.value, str)
+            return self.value
+
     def unparse(self) -> str:
         # attribute description
         if self.options is not None:
@@ -211,9 +221,16 @@ class Attribute:
         return f'{description}: {self.value}'
 
 
-@dataclass
+@dataclass(frozen=True)
 class Entry:
-    attributes: List[Tuple[str, Union[str, bytes, URL]]] = field(default_factory=list, init=False)
+    attributes: List[Tuple[str, Union[str, bytes, URL]]] = field(default_factory=list)
+
+    def __post_init__(self):
+        # force re-init to check all keys and values
+        _attrs = self.attributes[:]
+        self.attributes.clear()
+        for key, value in _attrs:
+            self.append(key, value)
 
     def __bool__(self) -> bool:
         return len(self.attributes) > 0
@@ -226,6 +243,22 @@ class Entry:
             return dn
         elif isinstance(dn, bytes):
             return dn.decode('utf8')  # distinguished names are always strings
+
+    @property
+    def controls(self):
+        return self.get_all('control')
+
+    @property
+    def change_type(self):
+        try:
+            _change_type = self.get_first('changetype')
+        except IndexError:
+            return 'add'  # default to add
+
+        if isinstance(_change_type, str):
+            return _change_type
+        elif isinstance(_change_type, bytes):
+            return _change_type.decode('utf8')  # distinguished names are always strings
 
     def append(self,
                key: str,
