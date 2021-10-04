@@ -121,7 +121,7 @@ def dump(file_obj: TextIO,
 
     :param file_obj: open('sample.ldif', 'w', encoding='ascii')
     :param ldap_entries: list of Entry instances
-    :param version: version number to write, or None to skip writing
+    :param version: version number to write (must be a positive integer), or None to skip writing
     :param line_width: the RFC says 76, but most systems will parse whatever you put in
     :return: number of objects written
     """
@@ -148,6 +148,8 @@ def dump(file_obj: TextIO,
     if version is not None:
         if not isinstance(version, int):
             raise TypeError(version)
+        if version < 0:
+            raise ValueError(version)
         write_folded_line(f'version: {version}')
         write_folded_line('')
 
